@@ -31,7 +31,7 @@ def main(argv):
     fields = ('netblock', 'proxy_type', 'proxy_level')
 
     w.writerow(fields)
-    for res_list in joblib.Parallel(n_jobs=3)(joblib.delayed(process_row)(row, fields) for row in r):
+    for res_list in joblib.Parallel(n_jobs=3, pre_dispatch='2 * n_jobs')(joblib.delayed(process_row)(row, fields) for row in r):
         for res in res_list:
             w.writerow(res)
 
