@@ -12,6 +12,26 @@ use Text::CSV;
 # MMDB format docs: https://maxmind.github.io/MaxMind-DB/
 # MaxMind::DB:Writer::Tree API docs: https://metacpan.org/pod/MaxMind::DB::Writer::Tree
 
+my $num_args = $#ARGV + 1;
+if ($num_args != 1) {
+    print "Usage: generate_mmdb.pl <tor or neustar>\n";
+    exit;
+}
+
+my $db_type = $ARGV[0];
+my $db_name = "";
+my $db_description = "";
+if ($db_type eq "tor") {
+    $db_name = "Tor-Project-List";
+    $db_description = "Tor project exit address listing";
+} elsif ($db_type eq "neustar") {
+    $db_name = "Neustar-IP-Gold";
+    $db_description = "Neustar IP Intelligence Gold Edition";
+} else {
+    print "Usage: generate_mmdb.pl <tor or neustar>\n";
+    exit;
+}
+
 my %types = (
     proxy_type => 'utf8_string',
     proxy_level => 'utf8_string',
@@ -26,9 +46,9 @@ my %types = (
 my $tree = MaxMind::DB::Writer::Tree->new(
     ip_version            => 4,
     record_size           => 24,
-    database_type         => 'Neustar-IP-Gold',
+    database_type         => $db_name,
     languages             => ['en'],
-    description           => { en => 'Neustar IP Intelligence Gold Edition' },
+    description           => { en => $db_description },
     map_key_type_callback => sub { $types{ $_[0] } },
 );
 
