@@ -5,6 +5,7 @@
 # obtain one at http://opensource.org/licenses/MIT.
 
 from __future__ import absolute_import, division, print_function
+import argparse
 import cStringIO
 import csv
 import fileinput
@@ -29,16 +30,21 @@ def process_row(row, fields):
 
 
 def main(argv):
-    r = csv.DictReader(fileinput.input(argv[1:]))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fields', type=lambda x: x.split(','), default=('netblock', 'proxy_type', 'proxy_level'),
+            help='comma-only (no spaces) separated list of the fields that you want in the output mmdb file')
+    parser.add_argument('neustar_file', help='Neustar GeoPoint CSV file; use - to read from stdin')
+    args = parser.parse_args(argv[1:])
+
+    r = csv.DictReader(fileinput.input(args.neustar_file))
     w = csv.writer(sys.stdout)
 
-    fields = ('netblock', 'proxy_type', 'proxy_level')
+    fields = args.fields
 
     w.writerow(fields)
     for res_list in joblib.Parallel(n_jobs=3, pre_dispatch='2 * n_jobs')(joblib.delayed(process_row)(row, fields) for row in r):
         for res in res_list:
             w.writerow(res)
-
 
 
 if __name__ == '__main__':
