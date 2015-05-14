@@ -1,5 +1,9 @@
 #!/usr/bin/env python2.7
 
+# This source code is subject to the terms of the MIT License. If a
+# copy of the MIT License was not distributed with this file, you can
+# obtain one at http://opensource.org/licenses/MIT.
+
 from __future__ import absolute_import, division, print_function
 import cStringIO
 import csv

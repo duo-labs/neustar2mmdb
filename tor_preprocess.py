@@ -1,4 +1,8 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
+
+# This source code is subject to the terms of the MIT License. If a
+# copy of the MIT License was not distributed with this file, you can
+# obtain one at http://opensource.org/licenses/MIT.
 
 """
 Reads a file for tor IPs max one IP per line and formats them into

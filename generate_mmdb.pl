@@ -1,4 +1,9 @@
 #!/usr/bin/perl
+
+# This source code is subject to the terms of the MIT License. If a
+# copy of the MIT License was not distributed with this file, you can
+# obtain one at http://opensource.org/licenses/MIT.
+
 use strict;
 use warnings;
 
