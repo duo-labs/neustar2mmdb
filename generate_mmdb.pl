@@ -7,6 +7,8 @@
 use strict;
 use warnings;
 
+use Data::Dumper;
+use List::Util;
 use MaxMind::DB::Writer::Tree;
 use Net::Works::Network;
 use Text::CSV;
@@ -22,6 +24,9 @@ if ($num_args != 1) {
     print "Usage: generate_mmdb.pl <tor or neustar>\n";
     exit;
 }
+
+# change input record separator from default of LF to CRLF
+$/ = "\r\n";
 
 my $db_type = $ARGV[0];
 my $db_name = "";
@@ -63,8 +68,15 @@ my $tree = MaxMind::DB::Writer::Tree->new(
 # Python's csv module, so binary it is! -klady
 my $csv = Text::CSV->new({ binary => 1 });
 
-# burn the header row
-readline(*STDIN);
+# grab the header row
+my $header = readline(*STDIN);
+$csv->parse($header);
+my @fieldnames = $csv->fields();
+
+# find the "netblock" field and splice it out
+my $netblock_i = 0;
+$netblock_i++ until $fieldnames[$netblock_i] eq 'netblock';
+splice(@fieldnames, $netblock_i, 1);
 
 while (my $line = <STDIN>) {
   chomp $line;
@@ -72,16 +84,18 @@ while (my $line = <STDIN>) {
   if ($csv->parse($line)) {
 
       my @fields = $csv->fields();
-      my ($netblock, $proxy_type, $proxy_level) = @fields;
+			my $netblock = $fields[$netblock_i];
+			splice(@fields, $netblock_i, 1);
 
       my $network = Net::Works::Network->new_from_string( string => $netblock );
 
+			# bulk initialize a hash. I don't understand the perl type system.
+			my %data = ();
+			@data{@fieldnames} = @fields;
+
       $tree->insert_network(
         $network,
-        {
-          proxy_type => $proxy_type,
-          proxy_level => $proxy_level,
-        }
+				\%data
       );
 
   } else {
