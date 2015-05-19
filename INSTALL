@@ -1,0 +1,56 @@
+Note: these instructions have only been tested on OS X 10.10. Your computer is
+different than mine; YMMV.
+
+MaxMind only provides a perl library for writing the database format:
+https://github.com/maxmind/MaxMind-DB-Writer-perl
+ 
+perlbrew seems like the optimal approach, as I don't entirely trust Apple to
+ship a sane version/config of Perl. I had to run this twice; YMMV:
+
+$ sudo cpan App::perlbrew
+
+ 
+The permissions resulting from that then need to be fixed if you want to
+install as non-root:
+
+$ sudo chown -R <username>:staff ~/perl5
+
+ 
+Run the initialization script
+
+$ perlbrew init
+
+ 
+Edit your .bashrc/.bash_profile  to include the following, and then run the
+following if you don't want to start a new session: (this assumes that you want
+to install modules in $HOME/perl5, so adjust accordingly or remove)
+
+. ~/perl5/perlbrew/etc/bashrc
+# adds $HOME/perl5/bin to PATH
+[ $SHLVL -eq 1 ] && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)" 
+
+ 
+Install the current stable version of Perl (set j to the desired number of
+parallel build processes):
+
+$ perlbrew install -j 3 stable
+
+ 
+Install cpanm, the less-insane to install modules with Perl:
+
+$ perlbrew install-cpanm
+
+ 
+MaxMind seems to be awful at correctly annotating dependencies... or passing
+their tests before they ship. Install these extra packages:
+
+$ cpanm JSON YAML Devel::Refcount
+
+ 
+You need to force the arch to amd64, as the default is both 64- and 32-bit, and
+then some of the IPv6 stuff with 128-bit ints explodes in x86. You need -n to
+skip running the unit tests, as it did not pass them as of the time of this
+writing, at which point it all ought to work:
+
+$ ARCHFLAGS="-arch x86_64" cpanm -n MaxMind::DB::Writer::Tree
+

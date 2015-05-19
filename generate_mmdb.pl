@@ -20,26 +20,24 @@ use Text::CSV;
 # MaxMind::DB:Writer::Tree API docs: https://metacpan.org/pod/MaxMind::DB::Writer::Tree
 
 my $num_args = $#ARGV + 1;
-if ($num_args != 1) {
-    print "Usage: generate_mmdb.pl <tor or neustar>\n";
-    exit;
+if ($num_args > 1) {
+    die "Usage: generate_mmdb.pl <tor or neustar>\n";
 }
 
 # change input record separator from default of LF to CRLF
 $/ = "\r\n";
 
-my $db_type = $ARGV[0];
+my $db_type = $ARGV[0] // "";
 my $db_name = "";
 my $db_description = "";
 if ($db_type eq "tor") {
     $db_name = "Tor-Project-List";
     $db_description = "Tor project exit address listing";
-} elsif ($db_type eq "neustar") {
+} elsif ($db_type eq "neustar" || $db_type eq "") {
     $db_name = "Neustar-IP-Gold";
     $db_description = "Neustar IP Intelligence Gold Edition";
 } else {
-    print "Usage: generate_mmdb.pl <tor or neustar>\n";
-    exit;
+    die "Usage: generate_mmdb.pl <tor or neustar>\n";
 }
 
 my %types = (
