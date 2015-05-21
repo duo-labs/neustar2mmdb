@@ -11,7 +11,6 @@ import csv
 import fileinput
 import sys
 
-import joblib
 import netaddr
 
 
@@ -42,10 +41,10 @@ def main(argv):
     fields = args.fields
 
     w.writerow(fields)
-    for res_list in joblib.Parallel(n_jobs=3, pre_dispatch='2 * n_jobs')(joblib.delayed(process_row)(row, fields) for row in r):
-        for res in res_list:
-            w.writerow(res)
 
+    for row in r:
+        for res in process_row(row, fields):
+            w.writerow(res)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
