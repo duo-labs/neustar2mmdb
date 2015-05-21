@@ -21,7 +21,7 @@ import netaddr
 
 def process_row(row, fields):
     res = []
-    netblocks = netaddr.cidr_merge(list(netaddr.iter_iprange(row['start_ip_int'], row['end_ip_int'])))
+    netblocks = netaddr.iprange_to_cidrs(netaddr.IPAddress(row['start_ip_int']), netaddr.IPAddress(row['end_ip_int']))
     for netblock in netblocks:
         row['netblock'] = netblock
         res.append([row[field] for field in fields])
