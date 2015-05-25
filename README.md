@@ -37,5 +37,12 @@ AddressNotFoundError: The address 1.2.3.4 is not in the database.
 In [7]: reader._get('Neustar-IP-Gold', '1.1.1.1')
 Out[7]: {u'proxy_level': u'elite\r', u'proxy_type': u'web'} 
 ```
-NB: we have to use `Reader._get()`, as the regular functions assume a
+NB: if you want to keep using the [https://pypi.python.org/pypi/geoip2](geoip2)
+module, you have to use `Reader._get()`, as the regular functions assume a
 particular MaxMind product and thus throw exceptions when you use them.
+
+An alternative to this is the
+[https://pypi.python.org/pypi/maxminddb](maxminddb) module. We stuck with
+`geoip2.database.Reader._get()` solely out of the convenience of not having to
+deploy another module, as we were already using geoip2 in production. (kudos to
+@oschwald for suggesting this module)
