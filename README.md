@@ -21,6 +21,26 @@ klady@klady:/svn/labs/research/neustardb $ ls -lh /tmp/nsperf.mmdb
 ```
 
 ## Database Usage Example
+Using the [https://pypi.python.org/pypi/maxminddb](maxminddb) module:
+```
+In [1]: import maxminddb
+
+In [2]: reader = maxminddb.open_database('/tmp/nsperf.mmdb')
+
+In [3]: reader.get('1.2.3.4')
+
+In [4]: print reader.get('1.2.3.4')
+None
+
+In [5]: reader.get('1.1.1.1')
+Out[5]: {u'proxy_level': u'elite', u'proxy_type': u'web'}
+```
+
+A somewhat hacky alternative is to use the
+[https://pypi.python.org/pypi/geoip2](geoip2) module. This does nothing more
+than wrap the dict-style interface in a class. Internal to Duo, we use this
+approach so as to maintain a similar API as when we use MaxMind GeoIP products
+in a similar fashion.
 ```
 In [1]: import geoip2.database
 
@@ -40,12 +60,6 @@ Out[7]: {u'proxy_level': u'elite\r', u'proxy_type': u'web'}
 NB: if you want to keep using the [https://pypi.python.org/pypi/geoip2](geoip2)
 module, you have to use `Reader._get()`, as the regular functions assume a
 particular MaxMind product and thus throw exceptions when you use them.
-
-An alternative to this is the
-[https://pypi.python.org/pypi/maxminddb](maxminddb) module. We stuck with
-`geoip2.database.Reader._get()` solely out of the convenience of not having to
-deploy another module, as we were already using geoip2 in production. (kudos to
-@oschwald for suggesting this module)
 
 ## PyPy
 We've achieved a ~1.4x speedup by using PyPy on a Mid-2014 15" MBP.
