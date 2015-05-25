@@ -46,3 +46,19 @@ An alternative to this is the
 `geoip2.database.Reader._get()` solely out of the convenience of not having to
 deploy another module, as we were already using geoip2 in production. (kudos to
 @oschwald for suggesting this module)
+
+## PyPy
+We've achieved a ~1.4x speedup by using PyPy on a Mid-2014 15" MBP.
+```
+$ head -n 10000 /data/neustar/v727.281_24.50_20150320.csv > /tmp/nsperf.csv
+$ time pypy preprocess.py /tmp/nsperf.csv | pypy reduce.py | perl generate_mmdb.pl > nsperf.mmdb
+
+real	0m0.849s
+user	0m1.255s
+sys	0m0.154s
+$ time python preprocess.py /tmp/nsperf.csv | python reduce.py | perl generate_mmdb.pl > nsperf.mmdb
+
+real	0m1.153s
+user	0m1.525s
+sys	0m0.110s
+```

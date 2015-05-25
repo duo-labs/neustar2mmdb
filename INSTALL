@@ -1,6 +1,15 @@
 Note: these instructions have only been tested on OS X 10.10. Your computer is
 different than mine; YMMV.
 
+===========
+Python
+===========
+
+$ pip install joblib netaddr
+
+===========
+Perl
+===========
 MaxMind only provides a perl library for writing the database format:
 https://github.com/maxmind/MaxMind-DB-Writer-perl
  
