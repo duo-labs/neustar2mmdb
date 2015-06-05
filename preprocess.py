@@ -28,6 +28,16 @@ def process_row(row, fields):
     return res
 
 
+def all_fields_null(row, fields):
+    for field in fields:
+        try:
+            if row[field] != '':
+                return False
+        except KeyError:
+            pass
+    return True
+
+
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('--fields', type=lambda x: x.split(','), default=('netblock', 'proxy_type', 'proxy_level'),
@@ -43,6 +53,8 @@ def main(argv):
     w.writerow(fields)
 
     for row in r:
+        if all_fields_null(row, fields):
+            continue
         for res in process_row(row, fields):
             w.writerow(res)
 
